@@ -1,4 +1,4 @@
-package com.example.myapplication.service
+package com.tumusx.github.easy_geofencing.service
 
 import android.content.Context
 import com.google.android.gms.location.Geofence

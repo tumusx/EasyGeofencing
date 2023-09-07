@@ -1,4 +1,4 @@
-package com.example.myapplication.broadcast
+package com.tumusx.github.easy_geofencing.broadcast
 
 import android.content.BroadcastReceiver
 import android.content.Context
