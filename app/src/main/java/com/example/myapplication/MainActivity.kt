@@ -1,5 +1,8 @@
 package com.example.myapplication
 
+import android.app.PendingIntent
+import android.content.Intent
+import android.location.Location
 import android.os.Build
 import android.os.Build.VERSION
 import android.os.Bundle
@@ -10,6 +13,9 @@ import com.example.myapplication.databinding.ActivityMainBinding
 import com.github.tumusx.easy_permissions.config.routes.openConfigByIntent
 import com.github.tumusx.easy_permissions.permissions.EasyPermissions
 import com.github.tumusx.easy_permissions.permissions.PermissionsListener
+import com.tumusx.github.easy_geofencing.broadcast.GeofencingBroadcast
+import com.tumusx.github.easy_geofencing.location.UpdateLocation
+import com.tumusx.github.easy_geofencing.service.GeofencingService
 
 class MainActivity : AppCompatActivity() {
     private val easyPermissions = EasyPermissions(this@MainActivity)
@@ -67,7 +73,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestPermissions() {
-        if (easyPermissions.checkPermissions(permissionsArray).not())
+        if (easyPermissions.checkPermissions(permissionsArray).not()) {
             easyPermissions.requestPermissions(permissionsArray)
+        } else {
+            UpdateLocation(this@MainActivity, 200, 2f)
+            val location = Location("").also {
+                it.latitude = -26.252245
+                it.longitude = -26.252245
+            }
+            val intent = Intent(this, GeofencingBroadcast::class.java)
+            GeofencingService.Builder().setRadius(200f).setInitialTrigger(5)
+                .addGeofence("1", location)
+                .setPendingIntent(
+                    PendingIntent.getBroadcast(
+                        this@MainActivity,
+                        0,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                    )
+                ).addGeofencingClient(context = this@MainActivity).build()
+        }
     }
 }
