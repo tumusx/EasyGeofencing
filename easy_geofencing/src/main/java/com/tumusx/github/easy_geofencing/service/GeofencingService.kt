@@ -1,6 +1,7 @@
 package com.tumusx.github.easy_geofencing.service
 
 import android.content.Context
+import android.location.Location
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
@@ -9,35 +10,44 @@ import com.google.android.gms.location.LocationServices
  * @author Murillo Alves
  * @see <a href="https://developer.android.com/training/location/geofencing">Android Documentation</a>
  */
-class GeofencingService {
-    private var applicationContext: Context? = null
-    private var initialTrigger: Int? = null
-    private var geofencingsList: List<Geofence>? = null
-    private var geofenceRequest: GeofencingRequest? = null
+class GeofencingService private constructor(
+    context: Context?,
+    initialTriggerTimer: Int,
+    locationGeofencing: Location?,
+    radiusGeofencing: Float
+) {
+    class Builder {
+        private var context: Context? = null
+        private var initialTriggerTimer: Int = 0
+        private var locationGeofencing: Location? = null
+        private var radiusGeofencing = 0F
 
-
-    fun onConfigGeofencing(geofencingList: List<Geofence>, context: Context): GeofencingService {
-        geofencingsList = geofencingList
-        applicationContext = context
-        val geofencingClient = LocationServices.getGeofencingClient(context)
-        return this
-    }
-
-    fun onGeofencingRequest(): GeofencingService {
-        val geofencingRequest = with(GeofencingRequest.Builder()) {
-            setInitialTrigger(initialTrigger ?: 0)
-            addGeofences(geofencingsList ?: listOf<Geofence>())
+        private fun setLocation(location: Location): Builder {
+            this.locationGeofencing = location
+            return this
         }
-        geofenceRequest = geofencingRequest.build()
-        return this
-    }
 
-    fun onConfigureTriggerGeofencing(triggerInitial: Int): GeofencingService {
-        initialTrigger = triggerInitial
-        return this
-    }
+        fun setRadius(radius: Float): Builder {
+            this.radiusGeofencing = radius
+            return this
+        }
 
-    fun builder(): GeofencingService {
-        return GeofencingService()
+        fun setContext(context: Context): Builder {
+            this.context = context
+            return this
+        }
+
+
+        fun setInitialTrigger(triggerTime: Int): Builder {
+            this.initialTriggerTimer = triggerTime
+            return this
+        }
+
+        fun build(): GeofencingService {
+            return GeofencingService(
+                context, initialTriggerTimer,
+                locationGeofencing, radiusGeofencing
+            )
+        }
     }
 }
