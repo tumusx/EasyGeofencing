@@ -7,6 +7,10 @@ android {
     namespace = "com.tumusx.github.easy_geofencing"
     compileSdk = 33
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         minSdk = 23
 
